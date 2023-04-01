@@ -2,6 +2,29 @@
 
 const clamp = (x, minVal, maxVal) => Math.min(Math.max(x, minVal), maxVal);
 
+const pointCollides = (x, y, bounds) => 
+    bounds.x <= x && x < bounds.x + bounds.w && 
+    bounds.y <= y && y < bounds.y + bounds.h;
+    
+const boundsCollide = (bounds1, bounds2) => 
+    bounds1.x < bounds2.x + bounds2.w &&
+    bounds1.y < bounds2.y + bounds2.h &&
+    bounds1.x + bounds1.w > bounds2.x &&
+    bounds1.y + bounds1.h > bounds2.y;
+
+function areaIsEmpty(checkedBounds, entities) {
+    let result = true;
+
+    entities.forEach(e => {
+        if (boundsCollide(checkedBounds, e.components.get(components.Bounds))) {
+            result = false;
+            return;
+        }
+    });
+
+    return result;
+}
+
 class Entity {
     constructor() {
         this.components = new WeakMap();
@@ -23,23 +46,18 @@ const components = {
             this.hp = hp;
         }
     },
-
-    Color: class {
-        constructor(color) {
-            this.color = color;
-        }
-    }
 } 
 
 const entityFactory = {
-    createBuilding: function(x, y, w, h, hp, color) {
-        const entity = new Entity();
-
-        entity.components.set(components.Bounds, new components.Bounds(x, y, w, h));
-        entity.components.set(components.Hp, new components.Hp(hp));
-        entity.components.set(components.Color, new components.Color(color));
-
-        return entity  
+    buildings: {
+        createMine: function(x, y) {
+            const entity = new Entity();
+    
+            entity.components.set(components.Bounds, new components.Bounds(x, y, 2, 2));
+            entity.components.set(components.Hp, new components.Hp(50));
+    
+            return entity  
+        }
     }
 }
 
@@ -61,35 +79,27 @@ const entities = [];
 
 // Setup
 {
-    entities.push(entityFactory.createBuilding(3, 0, 2, 2, 50, 'blue'));
-    entities.push(entityFactory.createBuilding(3, 1, 3, 2, 50, 'blue'));
+
 }
 
-// Mouse updates
+// Events
 {
-    function onMouseMove(e) {
+    canvas.onmousemove = (e) => {
         const canvasBounds = canvas.getBoundingClientRect();
+
         mouse.rawX = e.x - canvasBounds.x;
         mouse.rawY = e.y - canvasBounds.y;
     }
 
-    function onClick(e) {
-        console.log(e);
+    canvas.onclick = () => {
+        const newEntity = entityFactory.buildings.createMine(mouse.getX(), mouse.getY());
+        const newEntityBounds = newEntity.components.get(components.Bounds);
+
+        if (areaIsEmpty(newEntityBounds, entities)) {
+            entities.push(newEntity);
+        }
     }
-
-    canvas.addEventListener('mousemove', onMouseMove);
-    canvas.addEventListener('click', onClick);
 }
-
-const pointCollides = (x, y, bounds) => 
-    bounds.x <= x && x < bounds.x + bounds.w && 
-    bounds.y <= y && y < bounds.y + bounds.h;
-    
-const boundsCollide = (bounds1, bounds2) => 
-    bounds1.x < bounds2.x + bounds2.w &&
-    bounds1.y < bounds2.y + bounds2.h &&
-    bounds1.x + bounds1.w > bounds2.x &&
-    bounds1.y + bounds1.h > bounds2.y;
 
 function gameLoop() {
     {
@@ -97,9 +107,6 @@ function gameLoop() {
         {
             // Collisions
             {
-                if (boundsCollide(entities[0].components.get(components.Bounds), entities[1].components.get(components.Bounds))) {
-                    console.log('Bounds collide!');
-                }
             }
         }
 
@@ -116,7 +123,7 @@ function gameLoop() {
                 entities.forEach(e => {
                     const bounds = e.components.get(components.Bounds)
 
-                    ctx.fillStyle = e.components.get(components.Color).color;
+                    ctx.fillStyle = 'blue';
                     ctx.fillRect(bounds.x * grid.cellSize, bounds.y * grid.cellSize, bounds.w * grid.cellSize, bounds.h * grid.cellSize);
                 });
             }
