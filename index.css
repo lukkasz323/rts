@@ -1,0 +1,14 @@
+html {
+    font-family: Tahoma;
+    color: white;
+    text-align: center;
+    background-color: #444;
+}
+
+canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid white;
+}
