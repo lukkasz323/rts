@@ -12,3 +12,23 @@ canvas {
     transform: translate(-50%, -50%);
     border: 1px solid white;
 }
+
+table, th, td {
+    border: 1px solid white;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 1rem;
+}
+
+caption {
+    margin: 1rem;
+}
+
+#status {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    transform: translate(-50%, -50%);   
+}
