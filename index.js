@@ -12,19 +12,6 @@ const boundsCollide = (bounds1, bounds2) =>
     bounds1.x + bounds1.w > bounds2.x &&
     bounds1.y + bounds1.h > bounds2.y;
 
-function areaIsEmpty(checkedBounds, entities) {
-    let result = true;
-
-    entities.forEach(e => {
-        if (boundsCollide(checkedBounds, e.components.get(components.Bounds))) {
-            result = false;
-            return;
-        }
-    });
-
-    return result;
-}
-
 class Entity {
     constructor() {
         this.components = new WeakMap();
@@ -74,43 +61,56 @@ const entityFactory = {
     }
 }
 
+
 const $canvas = document.querySelector('canvas');
 const $status = document.getElementById('status');
 const $title = document.getElementById('title');
 
 const ctx = $canvas.getContext('2d');
 
-const mouse = {
-    rawX: null,
-    rawY: null,
-}; 
-mouse.getX = () => clamp(Math.floor((mouse.rawX) / grid.cellSize), 0, grid.cellCount - 1);
-mouse.getY = () => clamp(Math.floor((mouse.rawY) / grid.cellSize), 0, grid.cellCount - 1);
+const game = {
+    mouse: {
+        rawX: null,
+        rawY: null,
+        getX: null,
+        getY: null,
+    },
 
-const grid = {
-    cellSize: 40,
-};
-grid.cellCount = $canvas.width / grid.cellSize;
+    grid: {
+        cellSize: 40,
+        cellCount: null,
+    },
 
-const entities = [];
-
-const resources = {};
+    resources: {},
+    
+    debug: {},
+    
+    entities: [],
+}
 
 // Setup
 {
+    // Game
+    {
+        game.mouse.getX = () => clamp(Math.floor((game.mouse.rawX) / game.grid.cellSize), 0, game.grid.cellCount - 1);
+        game.mouse.getY = () => clamp(Math.floor((game.mouse.rawY) / game.grid.cellSize), 0, game.grid.cellCount - 1);
+
+        game.grid.cellCount = $canvas.width / game.grid.cellSize;
+    }
+
     // Status DOM
     {
         const types = components.Production.Types;
         for (const key in types) {
             const value = types[key];
     
-            var $row = $status.insertRow();
-            var $typeCell = $row.insertCell();
-            var $gainCell = $row.insertCell();
+            const $row = $status.insertRow();
+            const $typeCell = $row.insertCell();
+            const $gainCell = $row.insertCell();
             $typeCell.innerText = key;
             $gainCell.setAttribute('id', value);
     
-            resources[value] = 0;
+            game.resources[value] = 0;
         }
     }
 }
@@ -120,16 +120,29 @@ const resources = {};
     $canvas.onmousemove = (e) => {
         const canvasBounds = $canvas.getBoundingClientRect();
 
-        mouse.rawX = e.x - canvasBounds.x;
-        mouse.rawY = e.y - canvasBounds.y;
+        game.mouse.rawX = e.x - canvasBounds.x;
+        game.mouse.rawY = e.y - canvasBounds.y;
     }
 
     $canvas.onclick = () => {
-        const newEntity = entityFactory.buildings.createMine(mouse.getX(), mouse.getY());
+        function areaIsEmpty(checkedBounds) {
+            let result = true;
+        
+            game.entities.forEach(e => {
+                if (boundsCollide(checkedBounds, e.components.get(components.Bounds))) {
+                    result = false;
+                    return;
+                }
+            });
+        
+            return result;
+        }
+
+        const newEntity = entityFactory.buildings.createMine(game.mouse.getX(), game.mouse.getY());
         const newEntityBounds = newEntity.components.get(components.Bounds);
 
-        if (areaIsEmpty(newEntityBounds, entities)) {
-            entities.push(newEntity);
+        if (areaIsEmpty(newEntityBounds)) {
+            game.entities.push(newEntity);
         }
     }
 }
@@ -140,11 +153,11 @@ function gameLoop() {
         {
             // Resource production
             {
-                const productionComponents = entities.map(e => e.components.get(components.Production))
+                const productionComponents = game.entities.map(e => e.components.get(components.Production))
                 for (const production of productionComponents) {
                     if (production.progress >= 100) {
                         production.progress -= 100;
-                        resources[production.type] += production.gain;
+                        game.resources[production.type] += production.gain;
                     }
                     production.progress += 1;
                 }
@@ -161,33 +174,54 @@ function gameLoop() {
 
             // Entities
             {
-                for (const e of entities) {
-                    const bounds = e.components.get(components.Bounds)
+                for (const e of game.entities) {
+                    const bounds = e.components.get(components.Bounds);
+                    const production = e.components.get(components.Production);
 
-                    ctx.fillStyle = 'blue';
-                    ctx.fillRect(bounds.x * grid.cellSize, bounds.y * grid.cellSize, bounds.w * grid.cellSize, bounds.h * grid.cellSize);
+                    // Bounds
+                    {
+                        const x = bounds.x * game.grid.cellSize;
+                        const y = bounds.y * game.grid.cellSize;
+                        const w = bounds.w * game.grid.cellSize;
+                        const h = bounds.h * game.grid.cellSize;
+
+                        ctx.fillStyle = 'blue';
+                        ctx.fillRect(x, y, w, h);
+                    }
+
+                    //  Progress
+                    {
+                        const padding = 4;
+                        const x = (bounds.x * game.grid.cellSize) + padding;
+                        const y = (bounds.y * game.grid.cellSize) + padding;
+                        const w = ((production.progress / 100) * 80) - (padding * 2);
+                        const h = w;
+
+                        ctx.fillStyle = 'yellow';
+                        ctx.fillRect(x, y, w, h)
+                    }
                 }
             }
 
-            // Collisions
-            {
-                entities.forEach(e => {
-                    const bounds = e.components.get(components.Bounds)
+            // // Collisions
+            // {
+            //     game.entities.forEach(e => {
+            //         const bounds = e.components.get(components.Bounds)
 
-                    if (pointCollides(mouse.getX(), mouse.getY(), bounds)) {
-                        ctx.fillStyle = 'red';
-                        ctx.fillRect(bounds.x * grid.cellSize, bounds.y * grid.cellSize, bounds.w * grid.cellSize, bounds.h * grid.cellSize);
-                    }
-                });
-            }
+            //         if (pointCollides(game.mouse.getX(), game.mouse.getY(), bounds)) {
+            //             ctx.fillStyle = 'red';
+            //             ctx.fillRect(bounds.x * game.grid.cellSize, bounds.y * game.grid.cellSize, bounds.w * game.grid.cellSize, bounds.h * game.grid.cellSize);
+            //         }
+            //     });
+            // }
 
             // Grid
             {
-                const w = $canvas.width / grid.cellCount;
-                const h = $canvas.height / grid.cellCount;
+                const w = $canvas.width / game.grid.cellCount;
+                const h = $canvas.height / game.grid.cellCount;
 
-                for (let y = 0; y < grid.cellCount; y++) {
-                    for (let x = 0; x < grid.cellCount; x++) {
+                for (let y = 0; y < game.grid.cellCount; y++) {
+                    for (let x = 0; x < game.grid.cellCount; x++) {
                         ctx.strokeRect(x * w, y * h, w, h);
                     }
                 }
@@ -201,16 +235,17 @@ function gameLoop() {
                     for (const key in types) {
                         const value = types[key];
                         
-                        document.getElementById(value).innerText = resources[value];
+                        document.getElementById(value).innerText = game.resources[value];
                     }
                 }
-
-                // Debug
-                {
-                    $title.innerText = mouse.getX() + ', ' + mouse.getY();
-                }
             }
+        }
+
+        // Debug
+        {
+            const mouseCoords = game.mouse.getX() + ', ' + game.mouse.getY();
             
+            $title.innerText = mouseCoords;
         }
     }
     requestAnimationFrame(gameLoop);
