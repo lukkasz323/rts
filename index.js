@@ -110,39 +110,7 @@ const game = {
             $typeCell.innerText = key;
             $gainCell.setAttribute('id', value);
     
-            game.resources[value] = 0;
-        }
-    }
-}
-
-// Events
-{
-    $canvas.onmousemove = (e) => {
-        const canvasBounds = $canvas.getBoundingClientRect();
-
-        game.mouse.rawX = e.x - canvasBounds.x;
-        game.mouse.rawY = e.y - canvasBounds.y;
-    }
-
-    $canvas.onclick = () => {
-        function areaIsEmpty(checkedBounds) {
-            let result = true;
-        
-            game.entities.forEach(e => {
-                if (boundsCollide(checkedBounds, e.components.get(components.Bounds))) {
-                    result = false;
-                    return;
-                }
-            });
-        
-            return result;
-        }
-
-        const newEntity = entityFactory.buildings.createMine(game.mouse.getX(), game.mouse.getY());
-        const newEntityBounds = newEntity.components.get(components.Bounds);
-
-        if (areaIsEmpty(newEntityBounds)) {
-            game.entities.push(newEntity);
+            game.resources[value] = 100;
         }
     }
 }
@@ -194,7 +162,7 @@ function gameLoop() {
                         const padding = 4;
                         const x = (bounds.x * game.grid.cellSize) + padding;
                         const y = (bounds.y * game.grid.cellSize) + padding;
-                        const w = ((production.progress / 100) * 80) - (padding * 2);
+                        const w = ((production.progress / 100) * ((game.grid.cellSize * 2) - (padding * 2)));
                         const h = w;
 
                         ctx.fillStyle = 'yellow';
@@ -250,3 +218,35 @@ function gameLoop() {
     }
     requestAnimationFrame(gameLoop);
 } gameLoop();
+
+// Events
+{
+    $canvas.onmousemove = (e) => {
+        const canvasBounds = $canvas.getBoundingClientRect();
+
+        game.mouse.rawX = e.x - canvasBounds.x;
+        game.mouse.rawY = e.y - canvasBounds.y;
+    }
+
+    $canvas.onclick = () => {
+        function areaIsEmpty(checkedBounds) {
+            let result = true;
+        
+            game.entities.forEach(e => {
+                if (boundsCollide(checkedBounds, e.components.get(components.Bounds))) {
+                    result = false;
+                    return;
+                }
+            });
+        
+            return result;
+        }
+
+        const newEntity = entityFactory.buildings.createMine(game.mouse.getX(), game.mouse.getY());
+        const newEntityBounds = newEntity.components.get(components.Bounds);
+
+        if (areaIsEmpty(newEntityBounds)) {
+            game.entities.push(newEntity);
+        }
+    }
+}
