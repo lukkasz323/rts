@@ -1,5 +1,5 @@
-import { updateGame } from "./updateLoop/update.mjs";
-import { renderGame } from "./updateLoop/render/render.mjs";
+import { updateGame } from "./gameLoop/update.mjs";
+import { renderGame } from "./gameLoop/render/render.mjs";
 import { components } from "./components.mjs";
 import { areaIsEmpty } from "./utils.mjs";
 
@@ -55,12 +55,12 @@ function initGame($canvas, $status) {
     }
 } 
 
-function gameLoop() {
+function runGameLoop() {
     {
         updateGame();
         renderGame();
     }
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(runGameLoop);
 } 
 ``
 function addEventListeners() {
@@ -85,6 +85,6 @@ export function runGame($canvas, $status, $title) {
     const ctx = $canvas.getContext('2d');
 
     init($canvas, $status);
-    gameLoop();
+    runGameLoop();
     addEventListeners();
 }
