@@ -1,9 +1,8 @@
 import { GameState } from "./gameState.mjs";
 import { updateGame } from "./gameLoop/update.mjs";
 import { renderGame } from "./gameLoop/render/render.mjs";
+import { addEventListeners } from "./eventListeners.mjs";
 import { Components } from "./components.mjs";
-import { EntityFactory } from "./entities.mjs";
-import { areaIsEmpty } from "./utils.mjs";
 
 export class Game {
     constructor(gridScale, $canvas, $status, $title) {
@@ -27,24 +26,6 @@ function startGameLoop(gameState, $canvas, $title) {
     }   
     requestAnimationFrame(() => startGameLoop(gameState, $canvas, $title));
 } 
-
-function addEventListeners(gameState, $canvas) {
-    $canvas.onmousemove = (e) => {
-        const canvasBounds = $canvas.getBoundingClientRect();
-
-        gameState.mouse.rawX = e.x - canvasBounds.x;
-        gameState.mouse.rawY = e.y - canvasBounds.y;    
-    }
-
-    $canvas.onclick = () => {
-        const newEntity = EntityFactory.buildings.createMine(gameState.mouse.getX(), gameState.mouse.getY());
-        const newEntityBounds = newEntity.components.get(Components.Bounds);
-
-        if (areaIsEmpty(newEntityBounds, gameState.entities)) {
-            gameState.entities.push(newEntity);
-        }
-    }
-}
 
 function initDOM(gameState, $status) {
     const types = Components.Production.Types;
