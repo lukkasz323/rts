@@ -6,8 +6,8 @@ import { EntityFactory } from "./entities.mjs";
 import { areaIsEmpty } from "./utils.mjs";
 
 export class Game {
-    constructor($canvas, $status, $title) {
-        this.gameState = new GameState($canvas.width);
+    constructor(gridScale, $canvas, $status, $title) {
+        this.gameState = new GameState(gridScale, $canvas);
         this.$canvas = $canvas;
         this.$status = $status;
         this.$title = $title;
@@ -50,7 +50,7 @@ function initDOM(gameState, $status) {
     const types = Components.Production.Types;
     for (const key in types) {
         const value = types[key];
-
+        
         const $row = $status.insertRow();
         const $typeCell = $row.insertCell();
         const $gainCell = $row.insertCell();

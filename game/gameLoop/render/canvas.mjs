@@ -5,7 +5,7 @@ export function renderCanvas(gameState, $canvas) {
 
     renderBackground(ctx, $canvas.width, $canvas.height);
     renderEntities(ctx, gameState.entities, gameState.grid);
-    renderGrid(ctx, gameState.grid, $canvas.width, $canvas.height);
+    renderGrid(ctx, gameState.grid.scale, $canvas.width, $canvas.height);
 }
 
 function renderBackground(ctx, canvasWidth, canvasHeight) {
@@ -20,22 +20,22 @@ function renderEntities(ctx, entities, grid) {
 
         // Bounds
         {
-            const x = bounds.x * grid.cellSize;
-            const y = bounds.y * grid.cellSize;
-            const w = bounds.w * grid.cellSize;
-            const h = bounds.h * grid.cellSize;
+            const x = bounds.x * grid.getCellW();
+            const y = bounds.y * grid.getCellH();
+            const w = bounds.w * grid.getCellW();
+            const h = bounds.h * grid.getCellH();
 
             ctx.fillStyle = 'blue';
             ctx.fillRect(x, y, w, h);
         }
 
-        //  Progress
+        //  Progress bar
         {
             const padding = 4;
-            const x = (bounds.x * grid.cellSize) + padding;
-            const y = (bounds.y * grid.cellSize) + padding;
-            const w = ((production.progress / 100) * ((grid.cellSize * 2) - (padding * 2)));
-            const h = w;
+            const x = (bounds.x * grid.getCellW()) + padding;
+            const y = (bounds.y * grid.getCellH()) + padding;
+            const w = ((production.progress / 100) * ((2 * grid.getCellW()) - (padding * 2)));
+            const h = ((production.progress / 100) * ((2 * grid.getCellH()) - (padding * 2)));
 
             ctx.fillStyle = 'yellow';
             ctx.fillRect(x, y, w, h)
@@ -43,12 +43,12 @@ function renderEntities(ctx, entities, grid) {
     }
 }
 
-function renderGrid(ctx, grid, canvasWidth, canvasHeight) {
-    const w = canvasWidth / grid.cellCount;
-    const h = canvasHeight / grid.cellCount;
+function renderGrid(ctx, gridScale, canvasWidth, canvasHeight) {
+    const w = canvasWidth / gridScale;
+    const h = canvasHeight / gridScale;
 
-    for (let y = 0; y < grid.cellCount; y++) {
-        for (let x = 0; x < grid.cellCount; x++) {
+    for (let y = 0; y < gridScale; y++) {
+        for (let x = 0; x < gridScale; x++) {
             ctx.strokeRect(x * w, y * h, w, h);
         }
     }
