@@ -10,6 +10,8 @@ export class Game {
         this.$canvas = $canvas;
         this.$status = $status;
         this.$title = $title;
+
+        $canvas.getContext('2d').lineWidth = 2;
     }
 
     run() {

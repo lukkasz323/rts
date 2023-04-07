@@ -38,7 +38,7 @@ function renderEntities(ctx, entities, grid) {
             const h = ((production.progress / 100) * ((2 * grid.getCellH()) - (padding * 2)));
 
             ctx.fillStyle = 'yellow';
-            ctx.fillRect(x, y, w, h)
+            ctx.fillRect(x, y, w, h);
         }
     }
 }
