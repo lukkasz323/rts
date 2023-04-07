@@ -1,6 +1,6 @@
 import { Components } from "./components.mjs";
 import { EntityFactory } from "./entities.mjs";
-import { areaIsAllowed } from "./utils.mjs";
+import { areaIsAllowed } from "./collision.mjs";
 
 export function addEventListeners(gameState, $canvas) {
     $canvas.onmousemove = (e) => {
