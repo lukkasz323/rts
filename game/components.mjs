@@ -15,12 +15,14 @@ export const Components = {
     },
 
     Production: class {
-        static Types = {
+        static ResourceType = {
             GOLD: 'gold',
         }
 
-        constructor(type, gain) {
-            this.type = type;
+        constructor(price, priceResource, producedResource, gain) {
+            this.price = price;
+            this.priceResource = priceResource;
+            this.producedResource = producedResource;
             this.gain = gain;
             this.progress = 0;
         }

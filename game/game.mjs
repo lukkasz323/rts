@@ -28,16 +28,14 @@ function startGameLoop(gameState, $canvas, $title) {
 } 
 
 function initDOM(gameState, $status) {
-    const types = Components.Production.Types;
-    for (const key in types) {
-        const value = types[key];
+    const types = Components.Production.ResourceType;
+    for (const enumKey in types) {
+        const enumValue = types[enumKey];
         
         const $row = $status.insertRow();
         const $typeCell = $row.insertCell();
         const $gainCell = $row.insertCell();
-        $typeCell.innerText = key;
-        $gainCell.setAttribute('id', value);
-
-        gameState.resources[value] = 100;
+        $typeCell.innerText = enumKey;
+        $gainCell.setAttribute('id', enumValue);
     }
 }

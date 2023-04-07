@@ -1,3 +1,4 @@
+import { Components } from "./components.mjs";
 import { clamp } from "./utils.mjs";
 
 export class GameState {
@@ -16,6 +17,7 @@ export class GameState {
         };
 
         this.resources = {};
+        this.resources[Components.Production.ResourceType.GOLD] = 10;
         
         this.debug = {};
         

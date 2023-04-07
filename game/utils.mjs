@@ -1,6 +1,7 @@
 import { Components } from "./components.mjs";
 
-export const clamp = (x, minVal, maxVal) => Math.min(Math.max(x, minVal), maxVal);
+export const clamp = (x, minVal, maxVal) => 
+    Math.min(Math.max(x, minVal), maxVal);
 
 export const pointCollides = (x, y, bounds) => 
     bounds.x <= x && x < bounds.x + bounds.w && 

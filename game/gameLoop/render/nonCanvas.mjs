@@ -6,7 +6,7 @@ export function renderNonCanvas(gameState, $title) {
 }
 
 function renderStatus(resources) {
-    const types = Components.Production.Types;
+    const types = Components.Production.ResourceType;
     for (const key in types) {
         const value = types[key];
         
