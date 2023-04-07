@@ -1,8 +1,14 @@
 import { Components } from "./components.mjs";
 import { EntityFactory } from "./entities.mjs";
-import { areaIsAllowed } from "./collision.mjs";
+import { areaIsAllowed, pointCollides } from "./collision.mjs";
 
 export function addEventListeners(gameState, $canvas) {
+    window.onkeydown = (e) =>  {
+        if (e.key === '`') {
+            console.log(gameState);
+        }
+    }
+
     $canvas.onmousemove = (e) => {
         const canvasBounds = $canvas.getBoundingClientRect();
 
@@ -10,13 +16,25 @@ export function addEventListeners(gameState, $canvas) {
         gameState.mouse.rawY = e.y - canvasBounds.y;    
     }
 
-    $canvas.onclick = () => {
-        tryPlaceMine(gameState);
+    $canvas.onclick = (e) => {
+        if (e.shiftKey) {
+            tryPlaceMine(gameState);
+        } else if (e.altKey) {
+            tryDestroyBuilding(gameState);
+        }
+    }
+}
+
+function tryDestroyBuilding(gameState) {
+    for (const e of gameState.entities) {
+        if (pointCollides(gameState.mouse.getX(), gameState.mouse.getY(), e.components.get(Components.Bounds))) {
+            gameState.entities.splice(gameState.entities.findIndex((ee) => ee.id === e.id), 1);
+        }
     }
 }
 
 function tryPlaceMine(gameState) {
-    const newMine = EntityFactory.buildings.createMine(gameState.mouse.getX(), gameState.mouse.getY());
+    const newMine = EntityFactory.buildings.createMine(gameState.mouse.getX(), gameState.mouse.getY(), gameState.idContainer);
     tryPlaceBuilding(newMine, gameState);
 }
 

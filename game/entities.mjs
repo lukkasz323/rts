@@ -3,8 +3,8 @@ import { ResourceType } from "./enums.mjs";
 
 export const EntityFactory = {
     buildings: {
-        createMine: function(x, y) {
-            const entity = new Entity();
+        createMine: function(x, y, idContainer) {
+            const entity = new Entity(idContainer);
     
             entity.components.set(Components.Bounds, new Components.Bounds(x, y, 2, 2));
             entity.components.set(Components.Hp, new Components.Hp(50));
@@ -17,7 +17,8 @@ export const EntityFactory = {
 }
 
 class Entity {
-    constructor() {
+    constructor(idContainer) {
+        this.id = idContainer.id++;
         this.components = new WeakMap();
     }
 }

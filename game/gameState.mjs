@@ -3,6 +3,9 @@ import { clamp } from "./utils.mjs";
 
 export class GameState {
     constructor(gridScale, $canvas) {
+        this.idContainer = {
+            id: 0,
+        }
         this.mouse = {
             rawX: null,
             rawY: null, 
