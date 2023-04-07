@@ -9,7 +9,7 @@ function updateResourceProduction(gameState) {
     for (const production of productionComponents) {
         if (production.progress >= 100) {
             production.progress -= 100;
-            gameState.resources[production.producedResource] += production.gain;
+            gameState.resources[production.resource] += production.gain;
         }
         production.progress += 1;
     }

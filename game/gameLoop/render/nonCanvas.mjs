@@ -1,4 +1,5 @@
 import { Components } from "../../components.mjs";
+import { ResourceType } from "../../enums.mjs";
 
 export function renderNonCanvas(gameState, $title) {
     renderStatus(gameState.resources);
@@ -6,11 +7,10 @@ export function renderNonCanvas(gameState, $title) {
 }
 
 function renderStatus(resources) {
-    const types = Components.Production.ResourceType;
-    for (const key in types) {
-        const value = types[key];
+    for (const enumKey in ResourceType) {
+        const enumValue = ResourceType[enumKey];
         
-        document.getElementById(value).innerText = resources[value];
+        document.getElementById(enumValue).innerText = resources[enumValue];
     }
 }
 

@@ -14,17 +14,18 @@ export const Components = {
         }
     },
 
-    Production: class {
-        static ResourceType = {
-            GOLD: 'gold',
-        }
-
-        constructor(price, priceResource, producedResource, gain) {
+    Currency: class {
+        constructor(price, type) {
             this.price = price;
-            this.priceResource = priceResource;
-            this.producedResource = producedResource;
+            this.type = type;
+        }
+    },
+
+    Production: class {
+        constructor(resource, gain) {
+            this.resource = resource;
             this.gain = gain;
             this.progress = 0;
         }
-    }
+    },
 }

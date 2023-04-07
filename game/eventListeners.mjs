@@ -21,9 +21,9 @@ function tryPlaceMine(gameState) {
 }
 
 function tryPlaceBuilding(building, gameState) {
-    const production = building.components.get(Components.Production);
+    const currency = building.components.get(Components.Currency);
 
-    if (!enoughResource(production.price, production.priceResource, gameState.resources)) {
+    if (!enoughResource(currency.price, currency.type, gameState.resources)) {
         return false;
     }
 
@@ -31,7 +31,7 @@ function tryPlaceBuilding(building, gameState) {
         return false;
     }
 
-    gameState.resources[production.producedResource] -= production.price;
+    gameState.resources[currency.type] -= currency.price;
     gameState.entities.push(building);
     return true;
 }

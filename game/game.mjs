@@ -2,7 +2,7 @@ import { GameState } from "./gameState.mjs";
 import { updateGame } from "./gameLoop/update.mjs";
 import { renderGame } from "./gameLoop/render/render.mjs";
 import { addEventListeners } from "./eventListeners.mjs";
-import { Components } from "./components.mjs";
+import { ResourceType } from "./enums.mjs";
 
 export class Game {
     constructor(gridScale, $canvas, $status, $title) {
@@ -13,7 +13,7 @@ export class Game {
     }
 
     run() {
-        initDOM(this.gameState, this.$status);
+        initDOM(this.$status);
         addEventListeners(this.gameState, this.$canvas);
         startGameLoop(this.gameState, this.$canvas, this.$title);
     }
@@ -27,10 +27,9 @@ function startGameLoop(gameState, $canvas, $title) {
     requestAnimationFrame(() => startGameLoop(gameState, $canvas, $title));
 } 
 
-function initDOM(gameState, $status) {
-    const types = Components.Production.ResourceType;
-    for (const enumKey in types) {
-        const enumValue = types[enumKey];
+function initDOM($status) {
+    for (const enumKey in ResourceType) {
+        const enumValue = ResourceType[enumKey];
         
         const $row = $status.insertRow();
         const $typeCell = $row.insertCell();
