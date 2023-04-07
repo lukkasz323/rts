@@ -1,6 +1,6 @@
 import { Components } from "./components.mjs";
 import { EntityFactory } from "./entities.mjs";
-import { areaIsEmpty } from "./utils.mjs";
+import { areaIsAllowed } from "./utils.mjs";
 
 export function addEventListeners(gameState, $canvas) {
     $canvas.onmousemove = (e) => {
@@ -27,7 +27,7 @@ function tryPlaceBuilding(building, gameState) {
         return false;
     }
 
-    if (!areaIsEmpty(building.components.get(Components.Bounds), gameState.entities)) {
+    if (!areaIsAllowed(building.components.get(Components.Bounds), gameState.entities, gameState.grid.scale)) {
         return false;
     }
 

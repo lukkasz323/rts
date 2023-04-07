@@ -13,15 +13,21 @@ export const boundsCollide = (bounds1, bounds2) =>
     bounds1.x + bounds1.w > bounds2.x &&
     bounds1.y + bounds1.h > bounds2.y;
 
-export function areaIsEmpty(checkedBounds, entities) {
-    let result = true;
+export const boundsOutOfGrid = (checkedBounds, gridScale) => 
+    // Checks only positive coordinates!
+    checkedBounds.x + checkedBounds.w > gridScale ||
+    checkedBounds.y + checkedBounds.h > gridScale;
 
-    entities.forEach(e => {
+export function areaIsAllowed(checkedBounds, entities, gridScale) {
+    if (boundsOutOfGrid(checkedBounds, gridScale)) {
+        return false;
+    }
+
+    for (const e of entities) {
         if (boundsCollide(checkedBounds, e.components.get(Components.Bounds))) {
-            result = false;
-            return;
+            return false;
         }
-    });
+    }
 
-    return result;
+    return true;
 }
