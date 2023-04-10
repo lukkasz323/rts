@@ -26,4 +26,9 @@ export class GameState {
         
         this.entities = [];
     } 
-} 
+}
+
+export const getComponentsOfType = (entities, componentType) => 
+    entities
+        .filter(e => e.components.get(componentType))
+        .map(e => e.components.get(componentType));

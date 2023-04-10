@@ -16,8 +16,8 @@ export class Game {
 
     run() {
         initDOM(this.$status);
-        addEventListeners(this.gameState, this.$canvas);
         startGameLoop(this.gameState, this.$canvas, this.$title);
+        addEventListeners(this.gameState, this.$canvas);
     }
 }
 

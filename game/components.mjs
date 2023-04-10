@@ -7,12 +7,6 @@ export const Components = {
             this.h = h;
         }
     },
-    
-    Hp: class {
-        constructor(hp) {
-            this.hp = hp;
-        }
-    },
 
     Currency: class {
         constructor(price, type) {
@@ -26,6 +20,18 @@ export const Components = {
             this.resource = resource;
             this.gain = gain;
             this.progress = 0;
+        }
+    },
+
+    Hp: class {
+        constructor(hp) {
+            this.hp = hp;
+        }
+    },
+
+    Combat: class {
+        constructor(dmg) {
+            this.dmg = dmg;
         }
     },
 }
